@@ -1,0 +1,104 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: users
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-2
+  environment:
+    USERS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "*"
+
+resources:
+  Resources:
+    UsersDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"   
+        KeySchema:
+          -
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.USERS_TABLE}
+
+functions:
+  getUser:
+    handler: users/handler.getUser
+    memorySize: 128
+    description: Get User by ID
+    events:
+      - http:
+          path: users/{id}
+          method: get
+          cors: true
+  
+  getUsers:
+    handler: users/handler.getUsers
+    events:
+      - http:
+          path: users
+          method: get
+          cors: true
+
+  createUser:
+    handler: users/handler.createUser
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+  
+  updateUser:
+    handler: users/handler.updateUser
+    events:
+      - http:
+          path: users/{id}
+          method: put
+          cors: true
+  
+  deleteUser:
+    handler: users/handler.deleteUser
+    events:
+      - http:
+          path: users/{id}
+          method: delete
+          cors: true
+
