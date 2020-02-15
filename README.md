@@ -9,7 +9,8 @@ Um simples microsserviço em Node entregue na AWS utilizando o serverless framew
 
     npm install serverless -g
 
-    Se você ainda não tem uma conta AWS dê uma olhada aqui : [Como criar sua conta AWS](https://aws.amazon.com/pt/free/activate-your-free-tier-account/)
+    Se você ainda não tem uma conta AWS dê uma olhada aqui : 
+  - [Como criar sua conta AWS](https://aws.amazon.com/pt/free/activate-your-free-tier-account/)
 
     É necessário que sua conta tenha as seguintes permissões:
         - AmazonDynamodbFullAccess
